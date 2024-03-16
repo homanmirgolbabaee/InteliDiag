@@ -8,7 +8,6 @@ difficulty_level = None
 res = None
 
 
-@st.cache_data
 def generate_prediction(image_filename , prompt , difficulty_level):
 
     client = anthropic.Anthropic(
