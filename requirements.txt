@@ -1,7 +1,7 @@
 datetime
 streamlit
 pillow
-time
+python-time
 streamlit_lightweight_charts
 fitz
 requests
