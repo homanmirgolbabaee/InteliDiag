@@ -198,8 +198,8 @@ def price_prediction():
                                 mime="application/octet-stream"
                             )                
                     
-            else:
-                st.warning("Please upload a chart image and enter a prompt to enable report generation.")
+        else:
+            st.warning("Please upload a chart image and enter a prompt to enable report generation.")
         
             
 
