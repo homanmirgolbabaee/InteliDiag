@@ -6,7 +6,7 @@ streamlit_lightweight_charts
 fitz
 requests
 anthropic
-base64
+pybase64
 mimetypes
 fpdf
 finance
