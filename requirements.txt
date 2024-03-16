@@ -7,7 +7,7 @@ fitz
 requests
 anthropic
 pybase64
-mimetypes
+mimetype
 fpdf
 finance
 pandas
