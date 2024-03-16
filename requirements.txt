@@ -1,5 +1,6 @@
 datetime
 streamlit
+tools
 pillow
 python-time
 streamlit_lightweight_charts
