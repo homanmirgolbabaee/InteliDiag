@@ -3,6 +3,7 @@ streamlit
 pillow
 python-time
 streamlit_lightweight_charts
+pymupdf
 fitz
 requests
 anthropic
