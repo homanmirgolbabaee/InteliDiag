@@ -16,3 +16,4 @@ streamlit_toggle
 streamlit_telegram_login
 streamlit_lottie
 frontend
+yfinance
