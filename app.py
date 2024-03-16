@@ -17,8 +17,7 @@ from streamlit_lottie import st_lottie
 from streamlit_lottie import st_lottie_spinner
 import os
 
-# Set the environment variable for static file serving
-os.environ['STREAMLIT_SERVER_ENABLE_STATIC_SERVING'] = 'true'
+
 
 lottie_json="https://lottie.host/484bfe00-595d-4cf6-8ef6-b7c1473fc0ea/rAynIE1jpE.json"
 
@@ -241,16 +240,7 @@ def telgeram_streamlit_app():
     #else:
     #    st.write("Please log in using Telegram.")
 
-st.set_page_config(
-    page_title="Claude Crypto Assistant",
-    layout="wide",
-    initial_sidebar_state="expanded",
-    menu_items={
-        'Get Help': 'https://www.example.com',
-        'Report a bug': "https://www.example.com",
-        'About': "# This is a header. This is an *extremely* cool app!"
-    }
-)
+
 
 
 
