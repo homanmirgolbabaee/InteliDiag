@@ -15,10 +15,16 @@ from streamlit_telegram_login import TelegramLoginWidgetComponent
 from streamlit_telegram_login.helpers import YamlConfig
 from streamlit_lottie import st_lottie
 from streamlit_lottie import st_lottie_spinner
-
+import os
 
 lottie_json="https://lottie.host/484bfe00-595d-4cf6-8ef6-b7c1473fc0ea/rAynIE1jpE.json"
 
+# Ensure input and reports directories exist
+for directory in ["input", "reports"]:
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+        
+        
 def fetch_data(ticker, start_date, end_date):
     data = yf.download(ticker, start=start_date, end=end_date)
     data.reset_index(inplace=True)
@@ -116,7 +122,7 @@ def price_prediction():
 
     with data_entry_col:
             
-        st.header("Data Entry")
+        st.header("Data Submission")
         report_difficulty_level = st.selectbox("Choose a report difficulty level 💸", ["Standard", "Expert", "Crazy"])
         photo = st.file_uploader("Upload a chart image (.png, .jpg, .jpeg)", type=["png", "jpg", "jpeg"], help="Upload a chart image for prediction")
         prompt = st.text_input("Enter a prompt for the prediction")
@@ -129,7 +135,11 @@ def price_prediction():
                      
     with download_report_col:
         st.header("Download Report")
+      
         if photo and prompt:
+            file_path = os.path.join("input", photo.name)
+            with open(file_path, "wb") as f:
+                f.write(photo.getbuffer())  # Write the uploaded file to disk             
             # Logic to handle file upload and prompt submission
             file_path = "input/" + photo.name  # Placeholder for file saving logic
             response = generate_prediction(file_path, prompt, report_difficulty_level)
