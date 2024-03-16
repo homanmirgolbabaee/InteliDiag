@@ -17,6 +17,9 @@ from streamlit_lottie import st_lottie
 from streamlit_lottie import st_lottie_spinner
 import os
 
+# Set the environment variable for static file serving
+os.environ['STREAMLIT_SERVER_ENABLE_STATIC_SERVING'] = 'true'
+
 lottie_json="https://lottie.host/484bfe00-595d-4cf6-8ef6-b7c1473fc0ea/rAynIE1jpE.json"
 
 # Ensure input and reports directories exist
