@@ -137,11 +137,11 @@ def price_prediction():
         st.header("Download Report")
       
         if photo and prompt:
-            file_path = os.path.join("input", photo.name)
+            file_path = "input/" + photo.name  # Placeholder for file saving logic
             with open(file_path, "wb") as f:
                 f.write(photo.getbuffer())  # Write the uploaded file to disk             
             # Logic to handle file upload and prompt submission
-            file_path = "input/" + photo.name  # Placeholder for file saving logic
+            
             response = generate_prediction(file_path, prompt, report_difficulty_level)
             
             if response and len(response) > 0 and response[0].type == 'text':
