@@ -1,0 +1,5 @@
+datetime
+streamlit
+pillow
+time
+streamlit_lightweight_charts
