@@ -23,7 +23,9 @@ lottie_json="https://lottie.host/484bfe00-595d-4cf6-8ef6-b7c1473fc0ea/rAynIE1jpE
 for directory in ["input", "reports"]:
     if not os.path.exists(directory):
         os.makedirs(directory)
-        
+STATIC_DIR = 'static/'
+if not os.path.exists(STATIC_DIR):
+    os.makedirs(STATIC_DIR)        
         
 def fetch_data(ticker, start_date, end_date):
     data = yf.download(ticker, start=start_date, end=end_date)
