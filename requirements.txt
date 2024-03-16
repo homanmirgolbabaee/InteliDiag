@@ -9,9 +9,9 @@ anthropic
 pybase64
 mimetype
 fpdf
-finance
+yahoo-finance
 pandas
 streamlit_toggle
 streamlit_telegram_login
 streamlit_lottie
-json
+jsonlib
