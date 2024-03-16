@@ -8,8 +8,15 @@ import time
 from streamlit_lightweight_charts import renderLightweightCharts
 import yfinance as yf
 import pandas as pd
+import  streamlit_toggle as tog
+
+from streamlit_telegram_login import TelegramLoginWidgetComponent
+from streamlit_telegram_login.helpers import YamlConfig
+from streamlit_lottie import st_lottie
+from streamlit_lottie import st_lottie_spinner
 
 
+lottie_json="https://lottie.host/484bfe00-595d-4cf6-8ef6-b7c1473fc0ea/rAynIE1jpE.json"
 
 def fetch_data(ticker, start_date, end_date):
     data = yf.download(ticker, start=start_date, end=end_date)
@@ -25,10 +32,11 @@ def fetch_data(ticker, start_date, end_date):
 
 
 
-
-
 # Function to visualize data
 def visualize_data():
+    
+    
+    
     st.title("📈 Visualize Data")
 
     # User inputs for the ticker symbol and date range
@@ -106,11 +114,18 @@ def price_prediction():
     data_entry_col, download_report_col = st.columns([2, 1])
 
     with data_entry_col:
+            
         st.header("Data Entry")
         report_difficulty_level = st.selectbox("Choose a report difficulty level 💸", ["Standard", "Expert", "Crazy"])
         photo = st.file_uploader("Upload a chart image (.png, .jpg, .jpeg)", type=["png", "jpg", "jpeg"], help="Upload a chart image for prediction")
         prompt = st.text_input("Enter a prompt for the prediction")
 
+
+    if st.button("Download"):
+        with st_lottie_spinner(lottie_json, key="download" , width=100):
+            time.sleep(5)
+        st.balloons()                
+                     
     with download_report_col:
         st.header("Download Report")
         if photo and prompt:
@@ -152,6 +167,9 @@ def price_prediction():
             st.warning("Please upload a chart image and enter a prompt to enable report generation.")
 
 
+def telgeram_streamlit_app():
+    st.title("under construction 🚧")
+
 st.set_page_config(
     page_title="Claude Crypto Assistant",
     layout="wide",
@@ -162,22 +180,39 @@ st.set_page_config(
         'About': "# This is a header. This is an *extremely* cool app!"
     }
 )
-
-
+config_file = "config.yaml"
+# Load the configuration
+config = YamlConfig(config_file)
+telegram_login = TelegramLoginWidgetComponent(**config.config)
 
 
 
 def main():
     st.sidebar.title("🚀 Navigation")
     st.sidebar.markdown("Explore the different functionalities of Claude Crypto Assistant.")
-    page = st.sidebar.radio("Go to", ["Home 🏠", "Price Predictor 🔮","Visualize Data 📈"])
-
+    page = st.sidebar.radio("Go to", ["Home 🏠", "Price Predictor 🔮","Visualize Data 📈","Telegram"])
+    tog.st_toggle_switch(label="Label", 
+                    key="Key1", 
+                    default_value=False, 
+                    label_after = False, 
+                    inactive_color = '#D3D3D3', 
+                    active_color="#11567f", 
+                    track_color="#29B5E8"
+                    )
     if page == "Home 🏠":
+        
+        
         st.title("Welcome to Claude Crypto Assistant!")
+        
         st.markdown("Where magic happens for traders & stock traders. Get started by selecting an option from the sidebar.")
+    
+
+    
     elif page == "Price Predictor 🔮":
         price_prediction()
     elif page == "Visualize Data 📈":
         visualize_data()
+    elif page == "Telegram":
+        telgeram_streamlit_app()
 if __name__ == "__main__":
     main()
