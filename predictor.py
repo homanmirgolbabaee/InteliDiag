@@ -6,7 +6,9 @@ anthropic_api = st.secrets["anthropic_api"]
 message = None
 difficulty_level = None
 res = None
-@st.cache
+
+
+@st.cache_data
 def generate_prediction(image_filename , prompt , difficulty_level):
 
     client = anthropic.Anthropic(
@@ -115,10 +117,14 @@ def generate_prediction(image_filename , prompt , difficulty_level):
 
 
 
+import fitz
 
 def summarize_pdf(file_path):
-    with open(file_path, "rb") as file:
-        content = file.read().decode("utf-8")
+    # Open the PDF file
+    with fitz.open(file_path) as doc:
+        text = ""
+        for page in doc:
+            text += page.get_text()
         
     # Your logic to summarize the content goes here
     
@@ -137,13 +143,13 @@ def summarize_pdf(file_path):
                 "content": [
                     {
                         "type": "text",
-                        "text": "<document>{content}<document>"
+                        "text": text
                     }
                 ]
             }
         ]
     )
-    print(message.content)
+    return message.content
     
     
     
