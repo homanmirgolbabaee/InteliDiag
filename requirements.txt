@@ -3,3 +3,15 @@ streamlit
 pillow
 time
 streamlit_lightweight_charts
+fitz
+requests
+anthropic
+base64
+mimetypes
+fpdf
+finance
+pandas
+streamlit_toggle
+streamlit_telegram_login
+streamlit_lottie
+json
