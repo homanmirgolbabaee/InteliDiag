@@ -136,7 +136,7 @@ def price_prediction():
         st.header("Download Report")
       
         if photo and prompt:
-            file_path = "static/" + photo.name  # Placeholder for file saving logic
+            file_path = photo.name  # Placeholder for file saving logic
             with open(file_path, "wb") as f:
                 f.write(photo.getbuffer())  # Write the uploaded file to disk             
             # Logic to handle file upload and prompt submission
