@@ -1,4 +1,4 @@
-# [Your Application Name] 🚀
+# IntelliDiag 🚀
 
 [Your Application Name] is a state-of-the-art Streamlit application designed to empower enthusiasts and professionals in the crypto and stock markets with predictive insights and robust data visualization tools. By leveraging sophisticated AI and machine learning models, our platform delivers actionable market forecasts, deep technical analysis, and the ability to visualize complex financial data in an intuitive manner. Whether you are a seasoned trader, a financial analyst, or just passionate about the crypto and stock markets, [Your Application Name] offers a comprehensive suite of tools to inform your trading decisions.
 
