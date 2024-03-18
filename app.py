@@ -1,4 +1,15 @@
 import datetime
+from io import BytesIO
+
+from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, ServiceContext
+from llama_index.llms.openai import OpenAI
+import openai
+#from llama_index.readers.web import SimpleWebPageReader
+
+import numpy as np
+import csv
+from datetime import datetime
+  
 import streamlit as st
 from PIL import Image
 from fpdf import FPDF
@@ -16,12 +27,23 @@ from streamlit_telegram_login.helpers import YamlConfig
 from streamlit_lottie import st_lottie
 from streamlit_lottie import st_lottie_spinner
 import os
-
-
+import requests
 
 lottie_json="https://lottie.host/484bfe00-595d-4cf6-8ef6-b7c1473fc0ea/rAynIE1jpE.json"
 
-      
+# Set the environment variable for static file serving
+os.environ['STREAMLIT_SERVER_ENABLE_STATIC_SERVING'] = 'true'
+   
+TRANSLATE_HEADER = st.secrets["TRANSLATE_HEADER"]
+
+API_URL = "https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-en-it"
+headers = {"Authorization": TRANSLATE_HEADER }
+
+def Translatequery(payload):
+	response = requests.post(API_URL, headers=headers, json=payload)
+	return response.json()   
+   
+       
         
 def fetch_data(ticker, start_date, end_date):
     data = yf.download(ticker, start=start_date, end=end_date)
@@ -39,8 +61,6 @@ def fetch_data(ticker, start_date, end_date):
 
 # Function to visualize data
 def visualize_data():
-    
-    
     
     st.title("📈 Visualize Data")
 
@@ -125,96 +145,98 @@ def price_prediction():
         photo = st.file_uploader("Upload a chart image (.png, .jpg, .jpeg)", type=["png", "jpg", "jpeg"], help="Upload a chart image for prediction")
         prompt = st.text_input("Enter a prompt for the prediction")
 
-
+    st.info("Upload a *chart image* and *enter your request* to generate a report.")
     if st.button("Submit"):
         with st_lottie_spinner(lottie_json, key="download" , width=100):
             time.sleep(2.5)
         st.balloons()                
                      
-    with download_report_col:
-        st.header("Download Report")
-      
-        if photo and prompt:
-            file_path = photo.name  # Placeholder for file saving logic
-            with open(file_path, "wb") as f:
-                f.write(photo.getbuffer())  # Write the uploaded file to disk             
-            # Logic to handle file upload and prompt submission
-            
-            response = generate_prediction(file_path, prompt, report_difficulty_level)
-            
-            if response and len(response) > 0 and response[0].type == 'text':
-                prediction_text = response[0].text
-                
-                # Generate PDF report
-                pdf = FPDF()
-                pdf.add_page()
-                pdf.set_font("Helvetica", 'B', 16)
-                pdf.cell(0, 10, 'Cryptocurrency Prediction Report', 0, 1, 'C')
-                pdf.set_y(pdf.get_y() + 20)
-                pdf.set_font("Helvetica", size=12)
-                #now = datetime.now()
-                #date_string = now.strftime("%B %d, %Y")
-                #pdf.cell(0, 10, f'Report Generated on: {date_string}', 0, 1, 'C')
-                pdf.add_page()
-                pdf.set_font("Helvetica", 'B', 14)
-                pdf.set_y(pdf.get_y() + 10)
-                pdf.set_font("Helvetica", size=12)
-                pdf.multi_cell(0, 10, prediction_text)
-                filename = f"reports/prediction_report.pdf"
-                pdf.output(filename)
-                
-                # Provide a link for the user to download the report
-                with open(filename, "rb") as file:
-                    btn = st.download_button(
-                        label="Download Prediction Report",
-                        data=file,
-                        file_name=filename,
-                        mime="application/octet-stream"
-                    )
-                st.success("Report generated successfully. Please download using the button above.")
-                st.select_slider('Word Limit', options=[20, 50, 100, 400, 500])
-                if st.checkbox("Summarized"):
-                    result = summarize_pdf("reports/prediction_report.pdf")
-                
-                    if result and len(response) > 0 and result[0].type == 'text':
-                        prediction_text = result[0].text
-                        
-                        # Generate PDF report
-                        pdf = FPDF()
-                        pdf.add_page()
-                        pdf.set_font("Helvetica", 'B', 16)
-                        pdf.cell(0, 10, 'Cryptocurrency Prediction Report', 0, 1, 'C')
-                        pdf.set_y(pdf.get_y() + 20)
-                        pdf.set_font("Helvetica", size=12)
-                        #now = datetime.now()
-                        #date_string = now.strftime("%B %d, %Y")
-                        #pdf.cell(0, 10, f'Report Generated on: {date_string}', 0, 1, 'C')
-                        pdf.add_page()
-                        pdf.set_font("Helvetica", 'B', 14)
-                        pdf.set_y(pdf.get_y() + 10)
-                        pdf.set_font("Helvetica", size=12)
-                        pdf.multi_cell(0, 10, prediction_text)
-                        filename = f"reports/summarized_prediction_report.pdf"
-                        pdf.output(filename)
-                        
-                        # Provide a link for the user to download the report
-                        with open(filename, "rb") as file:
-                            btn = st.download_button(
-                                label="Download Prediction Report",
-                                data=file,
-                                file_name=filename,
-                                mime="application/octet-stream"
-                            )                
-                    
-        else:
-            st.warning("Please upload a chart image and enter a prompt to enable report generation.")
+        with download_report_col:
+            st.header("Download Report")
         
+            if photo and prompt:
+                file_path = "input/" + photo.name  # Placeholder for file saving logic
+                with open(file_path, "wb") as f:
+                    f.write(photo.getbuffer())  # Write the uploaded file to disk             
+                # Logic to handle file upload and prompt submission
+                
+                response = generate_prediction(file_path, prompt, report_difficulty_level)
+                
+                if response and len(response) > 0 and response[0].type == 'text':
+                    prediction_text = response[0].text
+                    
+                    # Generate PDF report
+                    pdf = FPDF()
+                    pdf.add_page()
+                    pdf.set_font("Helvetica", 'B', 16)
+                    pdf.cell(0, 10, 'Cryptocurrency Prediction Report', 0, 1, 'C')
+                    pdf.set_y(pdf.get_y() + 20)
+                    pdf.set_font("Helvetica", size=12)
+                    #now = datetime.now()
+                    #date_string = now.strftime("%B %d, %Y")
+                    #pdf.cell(0, 10, f'Report Generated on: {date_string}', 0, 1, 'C')
+                    pdf.add_page()
+                    pdf.set_font("Helvetica", 'B', 14)
+                    pdf.set_y(pdf.get_y() + 10)
+                    pdf.set_font("Helvetica", size=12)
+                    pdf.multi_cell(0, 10, prediction_text)
+                    filename = f"reports/prediction_report.pdf"
+                    pdf.output(filename)
+                    
+                    # Provide a link for the user to download the report
+                    with open(filename, "rb") as file:
+                        btn = st.download_button(
+                            label="Download Prediction Report",
+                            data=file,
+                            file_name=filename,
+                            mime="application/octet-stream"
+                        )
+                    st.success("Report generated successfully. Please download using the button above.")
+                    st.select_slider('Word Limit', options=[20, 50, 100, 400, 500])
+                    if st.checkbox("Summarized"):
+                        result = summarize_pdf("reports/prediction_report.pdf")
+                    
+                        if result and len(response) > 0 and result[0].type == 'text':
+                            prediction_text = result[0].text
+                            
+                            # Generate PDF report
+                            pdf = FPDF()
+                            pdf.add_page()
+                            pdf.set_font("Helvetica", 'B', 16)
+                            pdf.cell(0, 10, 'Cryptocurrency Prediction Report', 0, 1, 'C')
+                            pdf.set_y(pdf.get_y() + 20)
+                            pdf.set_font("Helvetica", size=12)
+                            #now = datetime.now()
+                            #date_string = now.strftime("%B %d, %Y")
+                            #pdf.cell(0, 10, f'Report Generated on: {date_string}', 0, 1, 'C')
+                            pdf.add_page()
+                            pdf.set_font("Helvetica", 'B', 14)
+                            pdf.set_y(pdf.get_y() + 10)
+                            pdf.set_font("Helvetica", size=12)
+                            pdf.multi_cell(0, 10, prediction_text)
+                            filename = f"reports/summarized_prediction_report.pdf"
+                            pdf.output(filename)
+                            
+                            # Provide a link for the user to download the report
+                            with open(filename, "rb") as file:
+                                btn = st.download_button(
+                                    label="Download Prediction Report",
+                                    data=file,
+                                    file_name=filename,
+                                    mime="application/octet-stream"
+                                )                
+                        
+            else:
+                pass
+                
             
+                
 
 
 def telgeram_streamlit_app():
     st.title("Under Construction 🚧")
-    
+    st.write("This feature is under construction. Please check back later.")
+    st.info("Soon you can have your reports on telegram dynamically 📲")
     # Assuming your 'config.yaml' is in the same directory as your script
     #config_file = "config.yaml"
     
@@ -244,10 +266,94 @@ def telgeram_streamlit_app():
 
 
 
+
+st.set_page_config(
+    page_title="Claude Crypto Assistant",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://www.example.com',
+        'Report a bug': "https://www.example.com",
+        'About': "# This is a header. This is an *extremely* cool app!"
+    }
+)
+
+def chatbot_app():
+    
+
+
+    openai.api_key = st.secrets.openai_key
+    st.header("InteliDiag Assistant🤖📝💬")
+
+    # Initialize session state for showing conversations
+    if "show_conversations" not in st.session_state:
+        st.session_state.show_conversations = False
+
+    if "messages" not in st.session_state.keys(): # Initialize the chat message history
+        st.session_state.messages = [
+            {"role": "assistant", "content": "Your Report Assistant is here to help you with your queries. Please ask your question."},
+        ]
+        #load_latest_conversation()
+
+    @st.cache_resource(show_spinner=False)
+    def load_data():
+        with st.spinner(text="Loading data from database – hang tight! This should take 1-2 minutes."):
+            reader = SimpleDirectoryReader(input_dir="./reports", recursive=True)
+            docs = reader.load_data()
+            service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="You are an expert assistant and your job is to answer technical questions. Keep your answers technical and based on facts – do not hallucinate features."))
+            index = VectorStoreIndex.from_documents(docs, service_context=service_context)
+            
+            
+            return index
+
+    index = load_data()
+    
+
+
+
+
+    chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
+    
+
+
+
+    if prompt := st.chat_input("Your question"): # Prompt for user input and save to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+
+
+
+    for message in st.session_state.messages: # Display the prior chat messages
+        with st.chat_message(message["role"]):
+            st.write(message["content"])
+
+
+
+    if st.session_state.messages and st.session_state.messages[-1]["role"] != "assistant":
+        with st.chat_message("assistant"):
+            with st.spinner("Thinking..."):
+                response = chat_engine.chat(prompt)
+                
+                st.write(response.response)
+                
+                
+                #output = Translatequery({
+                #    "inputs": str(response.response),
+                #    })
+                    
+                #print(output)
+                
+                #st.write("🌍"+ output[0].get("translation_text"))
+                message = {"role": "assistant", "content": response.response}
+                st.session_state.messages.append(message)
+                #save_conversation(st.session_state.messages)
+
+
+    
+
 def main():
     st.sidebar.title("🚀 Navigation")
     st.sidebar.markdown("Explore the different functionalities of Claude Crypto Assistant.")
-    page = st.sidebar.radio("Go to", ["Home 🏠", "Price Predictor 🔮","Visualize Data 📈","Telegram"])
+    page = st.sidebar.radio("Go to", ["Home 🏠", "Price Predictor 🔮","Visualize Data 📈","Telegram" ,"Chatbot"])
 
     
 
@@ -266,5 +372,12 @@ def main():
         visualize_data()
     elif page == "Telegram":
         telgeram_streamlit_app()
+    elif page == "Chatbot":
+        chatbot_app()
+        
+    # Footer
+    st.sidebar.markdown('---')
+    st.sidebar.markdown('© 2024 HackSwift Devpost Hackathon. Made with ❤️ by 🧠')
+            
 if __name__ == "__main__":
     main()
