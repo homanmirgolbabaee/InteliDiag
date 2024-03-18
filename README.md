@@ -71,7 +71,6 @@ Copy code
 3. **Install the required Python packages:**
 pip install -r requirements.txt
 
-csharp
 Copy code
 
 ## Usage 🚀
