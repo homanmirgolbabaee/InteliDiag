@@ -145,6 +145,12 @@ def price_prediction():
         photo = st.file_uploader("Upload a chart image (.png, .jpg, .jpeg)", type=["png", "jpg", "jpeg"], help="Upload a chart image for prediction")
         prompt = st.text_input("Enter a prompt for the prediction")
 
+	if report_difficulty_level =="Standard":
+		st.success("Mode Set to Standard 🪄")
+	if report_difficulty_level =="Expert":
+		st.sucess("Mode Set to Expert 🧠")
+	if report_difficulty_level =="Crazy":
+		st.success("Mode Set to Crazy 😶‍🌫️")	
     st.info("Upload a *chart image* and *enter your request* to generate a report.")
     if st.button("Submit"):
         with st_lottie_spinner(lottie_json, key="download" , width=100):
