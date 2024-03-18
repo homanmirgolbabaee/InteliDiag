@@ -60,18 +60,18 @@ Follow these steps to get [Your Application Name] running on your local machine:
 git clone https://github.com/[YourGitHub]/[RepositoryName].git
 
 markdown
-Copy code
+
 
 2. **Navigate to the project directory:**
 cd [RepositoryName]
 
 markdown
-Copy code
+
 
 3. **Install the required Python packages:**
 pip install -r requirements.txt
 
-Copy code
+
 
 ## Usage 🚀
 
@@ -80,7 +80,7 @@ Run [Your Application Name] using Streamlit with the following command:
 streamlit run app.py
 
 markdown
-Copy code
+
 
 After running the command, open your web browser and go to `http://localhost:8501` to start exploring the application.
 
