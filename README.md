@@ -12,7 +12,7 @@
 
 ## Features ✨
 
-[Your Application Name] includes a wide range of features designed to enhance your market analysis:
+IntelliDiag includes a wide range of features designed to enhance your market analysis:
 
 - **Predictive Analysis:** Utilize advanced AI models to generate market predictions. See `predictor.py` for the prediction logic.
 - **Data Visualization:** Interactive charts and graphs for visualizing stock and crypto market data. Powered by `app.py`.
